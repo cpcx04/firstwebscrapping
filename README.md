@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🕵️‍♂️ TikTok Scraping Project 🚀
 
-## Getting Started
+This project is a **TikTok Scraper** built using `puppeteer-core` and `chromium` for scraping and `Swiper`, `Framer Motion` for UI animation. It scrapes TikTok videos from a user’s page and displays them in a beautiful, animated carousel.
 
-First, run the development server:
+## 📦 Key Packages Used
+
+| Package               | Description                                                 | Links                                                                                   |
+|-----------------------|-------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| `puppeteer-core`       | A headless browser framework for scraping web content       | [Puppeteer Core](https://www.npmjs.com/package/puppeteer-core)                          |
+| `@sparticuz/chromium`  | Chromium binaries for use in AWS Lambda/Headless environments| [Sparticuz Chromium](https://github.com/Sparticuz/chromium)                             |
+| `swiper`               | A modern mobile touch slider for building carousels         | [Swiper](https://www.npmjs.com/package/swiper)                                          |
+| `framer-motion`        | A library for creating animations and transitions in React  | [Framer Motion](https://www.npmjs.com/package/framer-motion)                            |
+
+## 🚀 Features
+
+- Scrape TikTok videos using **Puppeteer** and **Chromium**.
+- Display videos in a **Swiper.js** carousel.
+- Animations and hover effects using **Framer Motion**.
+- **Responsive design** with breakpoints for different screen sizes.
+  
+## 🛠️ How to Set Up
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- **Node.js** (v14 or higher)
+- **npm** (v6 or higher)
+
+### Step 1: Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd <project-directory>
 ```
+### Step 2: Install Dependencies
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm install
+````
+This will install all the necessary packages from `package.json` including `puppeteer-core`, `swiper`, `chromium`, and `framer-motion`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Step 3: Run the Scraper
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ensure your environment has the correct **Chromium binary** path for the scraper.
 
-## Learn More
+```bash
+export CHROME_EXECUTABLE_PATH='/path/to/chromium'
+````
 
-To learn more about Next.js, take a look at the following resources:
+Start the scrapper by adding
+```bash
+npm run dev
+```
+### API Route
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project exposes an API route that scrapes a TikTok user's page:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Endpoint**: `/api/scraper`
+- **Method**: `POST`
+- **Payload**: JSON containing the `siteUrl` (TikTok profile link).
 
-## Deploy on Vercel
+### Example Payload
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```json
+{
+  "siteUrl": "https://www.tiktok.com/@midudev"
+}
+```
+### Step 4: Open the Project in Your Browser
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Go to `http://localhost:3000` to see the carousel with scraped TikTok videos.
+
+## 🖼️ UI Component
+
+The UI uses the following technologies:
+
+- **Swiper** for the responsive video carousel.
+- **Framer Motion** to add subtle hover animations and scaling effects to each video.
+
+```jsx
+<Swiper
+  slidesPerView={2}
+  breakpoints={{
+    0: { slidesPerView: 1.5 },
+    360: { slidesPerView: 2.5, spaceBetween: 10 },
+    820: { slidesPerView: 3.5 },
+    1200: { slidesPerView: 5.5, spaceBetween: 40 },
+  }}
+  loop={true}
+  autoplay={{ delay: 2000, disableOnInteraction: false }}
+  speed={3000}
+  spaceBetween={40}
+  modules={[Pagination, Autoplay]}
+  className="mySwiper"
+>
+  {results.videoList.map((data, index) => (
+    <SwiperSlide key={index}>
+      <motion.img
+        whileHover={{ scale: 0.8 }}
+        transition={{ duration: 0.1 }}
+        src={data.thumbnail.split(",")[0]}
+        alt={`TikTok Video ${index + 1}`}
+      />
+    </SwiperSlide>
+  ))}
+</Swiper>
+```
+## ✨ Custom Styling
+
+This project includes custom styles to enhance the UI/UX:
+
+```css
+/* Custom card styling */
+.card {
+  border: '4px solid #fff';
+  box-shadow: '0px 10px 20px rgba(0,0,0,0.1)';
+  transition: transform 0.5s;
+}
+
+/* Hover effects */
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: '0px 10px 20px rgba(0,0,0,0.3)';
+}
+```
+## 🚨 Error Handling
+
+If the scraper encounters an error (e.g., site down or wrong URL), the error is logged in the console.
+
+```js
+try {
+  const results = await fetch("/api/scraper", {...});
+} catch (error) {
+  console.error('Error fetching data:', error);
+}
+```
+## 🤖 Environment Variables
+
+To run this project locally, set the **Chromium executable path** in the environment variables:
+
+```bash
+export CHROME_EXECUTABLE_PATH='/path/to/chromium'
+```
+## 📑 Folder Structure
+
+```bash
+📦 tiktok-scraper
+ ┣ 📂api
+ ┃ ┗ 📜scraper.ts    # Puppeteer scraping logic
+ ┣ 📂components
+ ┃ ┗ 📜Scraping.tsx  # Swiper & Framer Motion for UI
+ ┣ 📜package.json    # NPM packages
+ ┣ 📜tsconfig.json    # TypeScript configuration
+ ┣ 📜next.config.js   # Next.js configuration
+ ┗ 📜README.md        # This file!
+```
+## 🌟 Contributing
+
+Feel free to submit issues and pull requests! Contributions are always welcome. 😊
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
