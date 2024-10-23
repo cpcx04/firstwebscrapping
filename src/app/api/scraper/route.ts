@@ -17,7 +17,7 @@ export async function POST(request: Request) {
             '--ignore-certificate-errors'],
         defaultViewport: chromium.defaultViewport,
         headless:false,
-        executablePath: isLocal? process.env.CHROME_EXECUTABLE_PATH || await chromium.executablePath("https://my-assets-data.s3.eu-west-3.amazonaws.com/chromium-v127.0.0-pack+(1).tar") : undefined
+        executablePath: isLocal? process.env.CHROME_EXECUTABLE_PATH || await chromium.executablePath(process.env.ROUTE_AWS) : undefined
     });
 
     const page = await browser.newPage();
